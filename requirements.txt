@@ -4,3 +4,4 @@ torch
 torchvision
 pydantic
 numpy
+python-multipart
