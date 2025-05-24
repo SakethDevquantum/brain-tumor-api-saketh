@@ -55,10 +55,10 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 from fastapi import Response
 
-@app.head("/predict", include_in_schema=False)
-@app.head("/predict/", include_in_schema=False)
-def head_predict():
-    return Response(status_code=200)
+@app.get("/predict", include_in_schema=False)
+@app.get("/predict/", include_in_schema=False)
+def ping_predict():
+    return {"message": "Ping OK"}
 
 
 @app.get("/")
