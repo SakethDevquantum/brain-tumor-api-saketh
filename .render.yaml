@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: brain-tumor-api-saketh
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "./start.sh"
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "8000"
