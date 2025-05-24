@@ -53,6 +53,12 @@ async def predict(file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+from fastapi import Response
+
+@app.head("/predict", include_in_schema=False)
+def head_predict():
+    return Response(status_code=200)
+
 
 @app.get("/")
 def root():
