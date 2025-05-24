@@ -56,6 +56,7 @@ async def predict(file: UploadFile = File(...)):
 from fastapi import Response
 
 @app.head("/predict", include_in_schema=False)
+@app.head("/predict/", include_in_schema=False)
 def head_predict():
     return Response(status_code=200)
 
