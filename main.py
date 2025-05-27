@@ -9,7 +9,17 @@ import io
 
 app = FastAPI()
 
-# Load model
+@app.middleware("http")
+async def add_head_support(request: Request, call_next):
+    if request.method == "HEAD":
+        request._scope["method"] = "GET"
+        response = await call_next(request)
+        response.body = b""
+        return response
+    else:
+        response = await call_next(request)
+        return response
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = Vit().to(device)
 
@@ -21,7 +31,7 @@ if os.path.exists(pth_path):
 else:
     raise RuntimeError("Model .pth file not found!")
 
-# Define transforms
+
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.Grayscale(num_output_channels=1),
@@ -29,7 +39,6 @@ transform = transforms.Compose([
     transforms.Normalize(mean=0.5, std=0.5)
 ])
 
-# Label mapping
 label_map = {
     0: "Glioma",
     1: "Meningioma",
