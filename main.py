@@ -9,7 +9,7 @@ import io
 
 app = FastAPI()
 
-# Load model
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = Vit().to(device)
 
@@ -21,7 +21,7 @@ if os.path.exists(pth_path):
 else:
     raise RuntimeError("Model .pth file not found!")
 
-# Define transforms
+
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.Grayscale(num_output_channels=1),
