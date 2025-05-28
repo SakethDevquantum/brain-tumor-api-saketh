@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Request
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 import torch
 from torchvision import transforms
@@ -9,17 +9,7 @@ import io
 
 app = FastAPI()
 
-@app.middleware("http")
-async def add_head_support(request: Request, call_next):
-    if request.method == "HEAD":
-        request.scope["method"] = "GET"
-        response = await call_next(request)
-        response.body = b""
-        return response
-    else:
-        response = await call_next(request)
-        return response
-
+# Load model
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = Vit().to(device)
 
@@ -31,7 +21,7 @@ if os.path.exists(pth_path):
 else:
     raise RuntimeError("Model .pth file not found!")
 
-
+# Define transforms
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.Grayscale(num_output_channels=1),
@@ -39,6 +29,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=0.5, std=0.5)
 ])
 
+# Label mapping
 label_map = {
     0: "Glioma",
     1: "Meningioma",
@@ -62,13 +53,6 @@ async def predict(file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-from fastapi import Response
-
-@app.get("/predict", include_in_schema=False)
-@app.get("/predict/", include_in_schema=False)
-def ping_predict():
-    return {"message": "Ping OK"}
-
 
 @app.get("/")
 def root():
