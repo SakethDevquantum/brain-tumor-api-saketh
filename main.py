@@ -12,7 +12,7 @@ app = FastAPI()
 @app.middleware("http")
 async def add_head_support(request: Request, call_next):
     if request.method == "HEAD":
-        request._scope["method"] = "GET"
+        request.scope["method"] = "GET"
         response = await call_next(request)
         response.body = b""
         return response
